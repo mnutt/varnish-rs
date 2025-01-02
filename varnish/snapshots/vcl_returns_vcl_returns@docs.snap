@@ -1,5 +1,6 @@
 ---
 source: varnish-macros/src/tests.rs
+snapshot_kind: text
 ---
 <!--
 
@@ -19,6 +20,8 @@ import vcl_returns;
 // Or load vmod from a specific file
 import vcl_returns from "path/to/libvcl_returns.so";
 ```
+
+### Function `VOID arg_vcl_backend(BACKEND backend)`
 
 ### Function `ACL val_acl()`
 

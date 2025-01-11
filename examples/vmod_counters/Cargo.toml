@@ -1,0 +1,18 @@
+[package]
+name = "vmod_counters"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+
+[dependencies]
+varnish = { workspace = true, features = ["ffi"] }
+cdylib-plugin = "0.1"
+
+[build-dependencies]
+cdylib-plugin = "0.1"
+
+[lib]
+crate-type = ["cdylib"]
+
+[lints]
+workspace = true

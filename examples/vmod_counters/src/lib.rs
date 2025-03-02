@@ -1,9 +1,7 @@
 use std::sync::atomic::AtomicU64;
+use varnish::{Vsc, VscMetric};
 
-use varnish::vsc_wrapper::Vsc;
-use varnish::Stats;
-
-#[derive(Stats)]
+#[derive(VscMetric)]
 #[repr(C)] // required for correct memory layout
 pub struct VariousStats {
     /// Some arbitrary counter
@@ -28,9 +26,7 @@ pub struct test {
 
 #[varnish::vmod(docs = "README.md")]
 mod stats {
-    use varnish::vsc_wrapper::Vsc;
-
-    use super::{test, VariousStats};
+    use super::{test, VariousStats, Vsc};
 
     impl test {
         pub fn new() -> Self {

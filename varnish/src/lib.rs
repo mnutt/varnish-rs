@@ -100,13 +100,13 @@ pub use varnish_sys::ffi;
 
 pub mod varnishtest;
 
-#[cfg(feature = "vsc")]
-pub mod vsc_wrapper;
+mod metrics_reader;
+pub use metrics_reader::{Metric, MetricFormat, MetricsReader, MetricsReaderBuilder, Semantics};
 
-#[cfg(feature = "vsc")]
-pub mod vsc;
+mod metrics_publisher;
+pub use metrics_publisher::{Vsc, VscMetric};
 
-pub use varnish_macros::{vmod, Stats};
+pub use varnish_macros::{vmod, VscMetric};
 
 /// Run all VTC tests using `varnishtest` utility.
 ///

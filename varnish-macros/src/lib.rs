@@ -9,6 +9,7 @@ use crate::gen_docs::generate_docs;
 use crate::generator::render_model;
 use crate::metrics::derive_vsc_metric;
 use crate::parser::tokens_to_model;
+use crate::vtc_tests::generate_vtc_tests;
 
 mod errors;
 mod gen_docs;
@@ -21,6 +22,7 @@ mod names;
 mod parser;
 mod parser_args;
 mod parser_utils;
+mod vtc_tests;
 
 pub(crate) type ProcResult<T> = Result<T, Errors>;
 
@@ -77,4 +79,17 @@ pub fn vsc_metric(input: pm::TokenStream) -> pm::TokenStream {
     derive_vsc_metric(&input)
         .unwrap_or_else(Errors::into_compile_error)
         .into()
+}
+
+/// Generate individual test functions for each VTC file matching the glob pattern.
+/// This is the internal implementation used by the `run_vtc_tests!` macro.
+///
+/// Usage (via the public macro):
+/// ```rust
+/// varnish::run_vtc_tests!("tests/*.vtc");
+/// ```
+#[doc(hidden)]
+#[proc_macro]
+pub fn __generate_vtc_tests(input: pm::TokenStream) -> pm::TokenStream {
+    generate_vtc_tests(input.into()).into()
 }

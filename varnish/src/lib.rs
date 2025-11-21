@@ -104,6 +104,10 @@ mod metrics_publisher;
 pub use metrics_publisher::{Vsc, VscMetric};
 pub use varnish_macros::{vmod, VscMetric};
 
+// Re-export the internal vtc test generator macro
+#[doc(hidden)]
+pub use varnish_macros::__generate_vtc_tests;
+
 /// Run all VTC tests using `varnishtest` utility.
 ///
 /// Varnish provides a very handy tool for end-to-end testing:
@@ -115,7 +119,7 @@ pub use varnish_macros::{vmod, VscMetric};
 /// ```
 ///
 /// This will create all the necessary code to run `varnishtest` alongside your unit
-/// tests when you run `cargo test`.
+/// tests when you run `cargo test`. Each VTC file will be run as a separate test function.
 ///
 /// **Important note:** you need to first build your vmod (i.e., with `cargo build`) before the tests can be run,
 /// otherwise you'll get a panic.
@@ -132,18 +136,9 @@ macro_rules! run_vtc_tests {
         $crate::run_vtc_tests!($glob_path, false);
     };
     ( $glob_path:expr, $debug:expr ) => {
+        // Use the procedural macro to generate individual test functions
+        // for each VTC file found at compile time
         #[cfg(test)]
-        #[test]
-        fn run_vtc_tests() {
-            if let Err(err) = $crate::varnishtest::run_all_tests(
-                env!("LD_LIBRARY_PATH"),
-                env!("CARGO_PKG_NAME"),
-                $glob_path,
-                option_env!("VARNISHTEST_DURATION").unwrap_or("5s"),
-                $debug,
-            ) {
-                panic!("{err}");
-            }
-        }
+        $crate::__generate_vtc_tests!($glob_path, $debug);
     };
 }

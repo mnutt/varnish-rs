@@ -172,6 +172,7 @@ pub enum ParamTy {
     SocketAddr,
     Str,
     CStr,
+    #[allow(non_camel_case_types)]
     VCL_BACKEND,
 }
 

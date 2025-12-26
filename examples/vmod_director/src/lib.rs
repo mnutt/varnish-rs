@@ -13,25 +13,24 @@ pub struct pool {
 #[varnish::vmod(docs = "API.md")]
 mod director {
     use rand;
+    use std::ffi::CStr;
     use std::net::SocketAddr;
     use varnish::ffi::{backend, BACKEND_MAGIC, VCL_BACKEND, VCL_IP, VRT_BACKEND_MAGIC};
     use varnish::vcl::{Ctx, LogTag, VclError};
-    use std::ffi::CStr;
 
     use super::pool;
 
     impl pool {
         pub fn new() -> Self {
-            Self { ..Default::default() }
+            Self {
+                ..Default::default()
+            }
         }
 
         pub fn add_backend(&self, ctx: &mut Ctx, be: VCL_BACKEND) -> Result<(), VclError> {
             unsafe {
                 let name_ptr = (*be.0).vcl_name;
-                let name = CStr::from_ptr(name_ptr)
-                    .to_str()
-                    .map(String::from)
-                    .unwrap();
+                let name = CStr::from_ptr(name_ptr).to_str().map(String::from).unwrap();
                 println!("backend name: {:?}", name);
             }
 
@@ -43,7 +42,11 @@ mod director {
                     let ipv4 = <VCL_IP as Into<Option<SocketAddr>>>::into(endpoint.ipv4).unwrap();
                     ctx.log(LogTag::Error, format!("added backend: {:?} ", ipv4));
                 } else {
-                    println!("expected magic: {:x}, got magic: {:x}", VRT_BACKEND_MAGIC, (*backend).magic);
+                    println!(
+                        "expected magic: {:x}, got magic: {:x}",
+                        VRT_BACKEND_MAGIC,
+                        (*backend).magic
+                    );
                     return Err(VclError::new("Invalid VRT_BACKEND_MAGIC".to_string()));
                 }
             }

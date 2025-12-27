@@ -273,4 +273,12 @@ impl OutputTy {
             Self::VclType(ty) => ty.into(),
         }
     }
+
+    pub fn requires_unsafe(&self) -> bool {
+        match self {
+            Self::VclType(_ty) => true,
+            Self::ParamType(ty) => matches!(ty, ParamTy::VclType(_)),
+            _ => false,
+        }
+    }
 }
